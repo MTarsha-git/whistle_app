@@ -1,0 +1,15 @@
+const express = require('express')
+const db = require('./models')
+const app = express()
+const roleRoutes = require('./routers/role-routes')
+const userRoutes = require('./routers/user-routes')
+
+app.use(express.urlencoded({extended:true}))
+app.use(express.json())
+app.use('/api/role',roleRoutes)
+app.use('/api/user',userRoutes)
+//app.use('/api/user',userRoutes)
+//app.use('/api/user',userRoutes)
+db.sequelize.sync({alter:true}).then(()=>{
+    app.listen(3000,()=>console.log('server listening in port 3000'))
+})
