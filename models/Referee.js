@@ -24,10 +24,10 @@ module.exports = (sequelize,Datatype)=>{
         }
     })
     
-    Referee.associate=models=>{
-        Referee.hasMany(models.User,{
-            onDelete:"cascade"
-        })
+    Referee.associate = models => {
+        Referee.hasOne(models.User, {
+            onDelete: "cascade"
+        });
     }
     return Referee
 }
