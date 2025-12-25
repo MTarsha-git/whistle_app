@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router()
-const db = require("../models/Referee")
+const db = require("../models")
 
 router.patch('/updateInfo/:id',async (req,res) => {
     try {
@@ -22,5 +22,19 @@ router.patch('/updateInfo/:id',async (req,res) => {
     }
 })
 
+// عندما اريد حذف المستخدم الحكم يجب الحذف عن طريق هذا الراوت 
+router.delete('/deleteOne/:id', async (req, res) => {
+    try {
+        const referee = await db.Referee.findOne({ where: { id: req.params.id } });
+        if (!referee) {
+            res.status(404).send({ message: 'Referee not found' });
+        } else {
+            await referee.destroy();
+            res.status(200).send({ message: 'Referee deleted successfully' });
+        }
+    } catch (error) {
+        res.status(500).send({ message: 'Error deleting referee', error });
+    }
+});
 
 module.exports = router;

@@ -90,6 +90,7 @@ route.patch('/editUser/:id', (req, res ,next) => {
         birthDate   : req.body.birthDate,
         address  : req.body.address,
         photo   : req.body.photo,
+        RoleId : req.body.RoleId
         
         },{where:{id:req.params.id}})
     .then((response)=> {

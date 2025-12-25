@@ -19,21 +19,19 @@ router.get('/getAllRole',(req,res)=>{
 
 router.get('/getOneRole/:id',async (req,res)=>{
     try {
-        const response = await db.Role.findOne({
+        const Role = await db.Role.findOne({
             where:{id:req.params.id}})
-            if (!response) {
+            if (!Role) {
                 return res.status(404).send({
                     message: 'Role not found'
                 });
             }else{
                 res.status(200).send({
                 message: 'Role fetched successfully',
-                data: response 
+                data: Role 
                 })
-                }
-
-            
-        } catch (err) {
+            }
+    } catch (err) {
         res.status(400).send({
             message: 'Error fetching role',
             error: err.message
@@ -60,13 +58,21 @@ router.post('/createRole', async (req, res) => {
 
 router.delete('/deleteRole/:id', async (req, res) => {
     try {
-        const response = await db.Role.destroy({
+        const Role = await db.Role.findOne({
             where: { id: req.params.id }
         });
+        if (!Role) {
+            return res.status(404).send({
+                message: 'Role not found'
+            });
+        }else{
+            await Role.destroy();
+        
         res.status(201).send({
             message: 'Role deleted successfully',
-            data: response
+            data: Role
         });
+        }
     } catch (err) {
         res.status(400).send({
             message: 'Error deleting role',
@@ -77,14 +83,21 @@ router.delete('/deleteRole/:id', async (req, res) => {
 
 router.patch('/updateRole/:id', async (req, res) => {
     try {
-        const response = await db.Role.update({
-            subject: req.body.subject
-        }, {
+        const Role = await db.Role.findOne({
             where: { id: req.params.id }
         });
+        if (!Role) {
+            return res.status(404).send({
+                message: 'Role not found'
+            });
+        }else{
+            await Role.update({
+                subject: req.body.subject
+            });
+        }
         res.status(201).send({
             message: 'Role updated successfully',
-            data: response
+            data: Role
         });
     } catch (err) {
         res.status(400).send({
