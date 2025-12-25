@@ -39,15 +39,14 @@ module.exports = (sequelize,Datatype)=>{
 
     })
     
-    User.associate=models=>{
-        User.belongsTo(models.Role,{
-            onDelete:"cascade"
-        })
-    }
-    User.associate=models=>{
-        User.belongsTo(models.Referee,{
-            onDelete:"cascade"
-        })
+    User.associate = models => {
+        User.belongsTo(models.Role, {
+            onDelete: "cascade"
+        });
+        User.belongsTo(models.Referee, {
+            foreignKey: 'RefereeId',
+            onDelete: "cascade"
+        });
     }
     return User
 }

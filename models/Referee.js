@@ -26,6 +26,7 @@ module.exports = (sequelize,Datatype)=>{
     
     Referee.associate = models => {
         Referee.hasOne(models.User, {
+            foreignKey: 'RefereeId',
             onDelete: "cascade"
         });
     }

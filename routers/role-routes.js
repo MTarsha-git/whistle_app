@@ -4,28 +4,93 @@ const db = require('../models')
 
 router.get('/getAllRole',(req,res)=>{
     db.Role.findAll()
-    .then((response)=>
-        res.status(200).send({
-            message:'Roles fetched successfully',
-            data:response
-    }))
+    .then((response)=>{
+            if (!response) {
+                return res.status(404).send({
+                    message: 'you do not have any roles'
+                });
+            }else{
+                res.status(200).send({
+                message: 'Role fetched successfully',
+                data: response })
+                }})
     .catch((err)=>res.status(400).send(err))
 })
 
-router.post('/createRole', (req, res) => {
-    db.Role.create({
-     subject : req.body.subject
-})
-    .then((response)=> {
+router.get('/getOneRole/:id',async (req,res)=>{
+    try {
+        const response = await db.Role.findOne({
+            where:{id:req.params.id}})
+            if (!response) {
+                return res.status(404).send({
+                    message: 'Role not found'
+                });
+            }else{
+                res.status(200).send({
+                message: 'Role fetched successfully',
+                data: response 
+                })
+                }
+
+            
+        } catch (err) {
+        res.status(400).send({
+            message: 'Error fetching role',
+            error: err.message
+        });
+    }
+        })
+
+router.post('/createRole', async (req, res) => {
+    try {
+        const response = await db.Role.create({
+            subject: req.body.subject
+        });
         res.status(201).send({
             message: 'Role created successfully',
             data: response
-        })
-    })    .catch((err) => {
+        });
+    } catch (err) {
         res.status(400).send({
-            message: 'Error creating user',
+            message: 'Error creating role',
             error: err.message
-        })
-    })
+        });
+    }
 })
+
+router.delete('/deleteRole/:id', async (req, res) => {
+    try {
+        const response = await db.Role.destroy({
+            where: { id: req.params.id }
+        });
+        res.status(201).send({
+            message: 'Role deleted successfully',
+            data: response
+        });
+    } catch (err) {
+        res.status(400).send({
+            message: 'Error deleting role',
+            error: err.message
+        });
+    }
+})
+
+router.patch('/updateRole/:id', async (req, res) => {
+    try {
+        const response = await db.Role.update({
+            subject: req.body.subject
+        }, {
+            where: { id: req.params.id }
+        });
+        res.status(201).send({
+            message: 'Role updated successfully',
+            data: response
+        });
+    } catch (err) {
+        res.status(400).send({
+            message: 'Error updating role',
+            error: err.message
+        });
+    }
+});
 module.exports = router
