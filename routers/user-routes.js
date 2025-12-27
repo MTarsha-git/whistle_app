@@ -13,23 +13,24 @@ route.get('/getAllUsers',(req,res)=>{
     .catch((err)=>res.status(400).send(err))
 })
 
-route.get('/getUser/:id',(req,res,next)=>{
-    db.User.findOne({
-        where:{id:req.params.id},
-        include:[{model:db.Referee},{model:db.Role}]})
-    .then((response)=> {
-    if (!response) {
-                return res.status(404).send({
-                    message: 'User not found'
-                });
-            }else{
-                res.status(200).send({
-                message: 'User fetched successfully',
-                data: response 
-                })
-                }    })
-    .catch((err)=>res.status(400).send(err))
+route.get('/getUser/:id', async (req, res, next) => {
+    try {
+        // fetch basic user to determine the role
+        const basicUser = await db.User.findOne({ where: { id: req.params.id } });
+        if (!basicUser) {
+            return res.status(404).send({ message: 'User not found' });
+        }else{       
 
+        // include Role always; include Referee additionally when RoleId === 3
+        const includeModels = basicUser.RoleId == 3 ? [{ model: db.Role }, { model: db.Referee }] : [{ model: db.Role }];
+
+        const user = await db.User.findOne({ where: { id: req.params.id }, include: includeModels });
+
+        return res.status(200).send({ message: 'User fetched successfully', data: user });
+        }
+    } catch (err) {
+        return res.status(400).send(err);
+    }
 })
 route.post('/createUser', async (req, res) => {
     if(req.body.RoleId == 3){
