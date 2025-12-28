@@ -29,39 +29,7 @@ fs
     const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
     db[model.name] = model;
   });
-//.forEach(file => {
-//    const filePath = path.join(__dirname, file);
-//    let required;
-//    try {
-//      required = require(filePath);
-//    } catch (err) {
-//      console.error(`Failed to require model file ${file}:`, err);
-//      return;
-//    }
-//
-//    let model;
-//    try {
-//      if (typeof required === 'function') {
-//        model = required(sequelize, Sequelize.DataTypes);
-//      } else if (required && required.prototype instanceof Sequelize.Model) {
-//        model = required;
-//      } else if (required && required.name && required.name !== 'Object') {
-//        model = required;
-//      } else {
-//        console.warn(`Skipping '${file}' — not a recognized Sequelize model export.`);
-//        return;
-//      }
-//
-//      if (!model || !model.name) {
-//        console.warn(`Skipping '${file}' — loaded model is missing 'name' property.`);
-//        return;
-//      }
-//
-//      db[model.name] = model;
-//    } catch (err) {
-//      console.error(`Error initializing model from file ${file}:`, err);
-//    }
-//  });
+  
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
