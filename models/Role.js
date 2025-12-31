@@ -10,7 +10,9 @@ module.exports=(sequelize,Datatype)=>{
     
     Role.associate=models=>{
         Role.hasMany(models.User,{
-            onDelete:"cascade"
+            foreignKey: { name: 'RoleId', allowNull: false },
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
         })
     }
 

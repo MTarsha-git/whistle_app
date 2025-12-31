@@ -60,7 +60,7 @@ const deleteRole = async (req, res) => {
             where: { id: req.params.id }
         });
         if (!Role) {
-            return res.status(404).send({
+                res.status(404).send({
                 message: 'Role not found'
             });
         }else{
