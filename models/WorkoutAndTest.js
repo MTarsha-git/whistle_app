@@ -1,7 +1,12 @@
 module.exports = (sequelize,Datatype)=>{
     const WAT = sequelize.define("WAT",{
-        DateAndTime:{
-            type:Datatype.DATE,
+        Date:{
+            type:Datatype.DATEONLY,
+            allowNull:false,
+            unique:true    
+        },
+        Time:{
+            type:Datatype.TIME,
             allowNull:false
         },
         Type:{
@@ -17,8 +22,13 @@ module.exports = (sequelize,Datatype)=>{
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE'
         });
+        WAT.belongsTo(models.User, {
+            foreignKey: { name: 'UserId', allowNull: false },
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+        });
         WAT.hasOne(models.TestResult, {
-            foreignKey: { name: 'WATId', allowNull: true },
+            foreignKey: { name: 'WATId', allowNull: false },
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE'
         });

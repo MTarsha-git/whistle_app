@@ -26,9 +26,15 @@ module.exports = (sequelize,Datatype)=>{
     
     Referee.associate = models => {
         Referee.hasOne(models.User, {
-            foreignKey: 'RefereeId',
-            onDelete: "CASCADE"
+            foreignKey: { name: 'RefereeId', allowNull: true },
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE"
         });
+        /*Referee.hasMany(models.WorkoutAndTest, {
+            foreignKey: { name: 'RefereeId', allowNull: false },
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE"
+        });*/
     }
     return Referee
 }

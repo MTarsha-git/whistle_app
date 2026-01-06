@@ -5,6 +5,7 @@ const roleRoutes = require('./routes/role-routes')
 const userRoutes = require('./routes/user-routes')
 const refereeRoutes = require('./routes/referee-routes')
 const courtRoutes = require('./routes/court-routes')
+const workoutAndTestRoutes = require('./routes/workoutAndTest-routes')
 
 
 

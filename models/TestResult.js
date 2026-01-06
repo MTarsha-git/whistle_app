@@ -17,7 +17,7 @@ module.exports = (sequelize,Datatype)=>{
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE'
         });
-       /* User.belongsTo(models.Referee, {
+        /*TestResult.belongsTo(models.Referee, {
             foreignKey: { name: 'RefereeId', allowNull: true },
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE'

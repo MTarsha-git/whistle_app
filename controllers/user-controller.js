@@ -1,5 +1,5 @@
 const db = require('../models')
-const Referee = require('../models/Referee')
+//const Referee = require('../models/Referee')
 
 const getAllUsers = (req,res)=>{
     db.User.findAll()

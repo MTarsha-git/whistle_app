@@ -40,6 +40,12 @@ module.exports = (sequelize,Datatype)=>{
     })
     
     User.associate = models => {
+        User.hasMany(models.WAT, {
+            foreignKey: { name: 'UserId', allowNull: false },
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE"
+        });
+
         User.belongsTo(models.Role, {
             foreignKey: { name: 'RoleId', allowNull: false },
             onDelete: 'CASCADE',
