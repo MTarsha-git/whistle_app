@@ -1,27 +1,17 @@
 module.exports = (sequelize,Datatype)=>{
     const TestResult = sequelize.define("TestResult",{
-        DateAndTime:{
-            type:Datatype.DATE,
-            allowNull:false
-        },
-        Type:{
+        status:{
             type:Datatype.BOOLEAN,
-            allowNull:false,
-            // true for test, false for workout
-        },
+            allowNull:false
+        }
     })
     
     TestResult.associate = models => {
         TestResult.belongsTo(models.WAT, {
-            foreignKey: { name: 'WATId', allowNull: false },
+            foreignKey: { name: 'WATId', allowNull: false ,unique:true},
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE'
-        });
-        /*TestResult.belongsTo(models.Referee, {
-            foreignKey: { name: 'RefereeId', allowNull: true },
-            onDelete: 'CASCADE',
-            onUpdate: 'CASCADE'
-        });*/
+        })
     }  
     return TestResult
 }

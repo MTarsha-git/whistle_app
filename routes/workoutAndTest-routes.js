@@ -4,6 +4,10 @@ const WAT_controller = require('../controllers/workoutAndTest-controller')
 
 router.get('/getAllWAT',WAT_controller.getAllWAT);
 
+router.get('/getAllTests',WAT_controller.getAllTests);
+
+router.get('/getAllWorkouts',WAT_controller.getAllWorkouts);
+
 router.get('/getOneWAT/:id',WAT_controller.getOneWAT);
 
 router.post('/createWAT',WAT_controller.createWAT);

@@ -2,14 +2,13 @@ module.exports = (sequelize,Datatype)=>{
     const WAT = sequelize.define("WAT",{
         Date:{
             type:Datatype.DATEONLY,
-            allowNull:false,
-            unique:true    
+            allowNull:false,    
         },
         Time:{
             type:Datatype.TIME,
             allowNull:false
         },
-        Type:{
+        TypeActivity:{
             type:Datatype.BOOLEAN,
             allowNull:false,
             // true for test, false for workout
