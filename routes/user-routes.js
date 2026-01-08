@@ -4,6 +4,10 @@ const user = require('../controllers/user-controller')
 
 router.get('/getAllUsers',user.getAllUsers);
 
+router.get('/getAllReferees',user.getAllReferee);
+
+router.get('/getAllRefereeAssessor',user.getAllRefereeAssessor);
+
 router.get('/getUser/:id', user.getOneUser);
 
 router.post('/createUser', user.createUser);

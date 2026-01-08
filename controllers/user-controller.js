@@ -11,6 +11,31 @@ const getAllUsers = (req,res)=>{
     .catch((err)=>res.status(400).send(err))
 };
 
+const getAllReferee = async (req,res)=>{
+    try{
+        const allReferees = await db.User.findAll({
+        where: { RoleId: 3 },
+        include: [{ model: db.Referee }]
+    });
+    return res.status(200).send({
+        message: 'Referees fetched successfully',
+        data: allReferees });
+    }catch(err){
+    return res.status(400).send(err);
+    }
+};
+
+const getAllRefereeAssessor = async (req,res)=>{
+    try{const allRefereesAssessor = await db.User.findAll({
+        where: { RoleId: 2 },
+        include: [{ model: db.Role }]
+    });
+    return res.status(200).send({ message: 'Referees Assessor fetched successfully', data: allRefereesAssessor });
+    }catch(err){
+    return res.status(400).send(err);
+    }
+};
+
 const getOneUser = async (req, res) => {
     try {
         // fetch basic user to determine the role
@@ -130,6 +155,8 @@ const deleteUser = async(req,res)=>{
 };
 module.exports = {
     getAllUsers,
+    getAllReferee,
+    getAllRefereeAssessor,
     getOneUser,
     createUser,
     updateUser,
