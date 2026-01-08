@@ -4,7 +4,7 @@ const testResult = require('../controllers/testResult-controller')
 
 router.get('/getAllTestsResult', testResult.getAllTestsResult);
 
-router.get('/getAllTestsResultForOneReferee/:refereeId', testResult.getAllTestsResultForOneReferee);
+router.get('/getAllTestsResultForOneUser/:UserId', testResult.getAllTestsResultForOneUser);
 
 router.get('/getOneResultByTestId/:WATId', testResult.getOneResultByTestId);
 

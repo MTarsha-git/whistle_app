@@ -17,12 +17,24 @@ const getAllTestsResult = async (req, res) => {
     }catch{(err) => {return res.status(400).send(err)}};
 };
 
-const getAllTestsResultForOneReferee = async (req, res) => {
+const getAllTestsResultForOneUser = async (req, res) => {
     try {
+        const getAllTestOfUser = await db.WAT.findAll({
+            attributes: ['id'],
+            where: { 
+                UserId: req.params.UserId,
+                TypeActivity: true
+            }
+        });
+        if(getAllTestOfUser.length===0){
+            return res.status(404).send({
+                message: 'no tests for this user found'
+            });
+        }
         const ResultOfReferee = await db.TestResult.findAll({
             where:{
                 WATId: {
-                    [db.Sequelize.Op.in]: db.sequelize.literal(`(SELECT id FROM "WATs" WHERE "RefereeId" = ${req.params.refereeId})`)
+                    [db.Sequelize.Op.in]: getAllTestOfUser.map(test => test.id)
                 }
             }
         });
@@ -57,7 +69,7 @@ const getOneResultByTestId = async (req, res) => {
                     message: 'The specified WAT is not a test it is a workout'
                 });
             } else {
-                const includeModels = [{ model: db.WAT, as: 'Test' }];
+                const includeModels = [{ model: db.WAT }];
                 const Result = await db.TestResult.findOne({
                     where: { WATId },
                     include: includeModels
@@ -218,7 +230,7 @@ const deleteTestsResult = async(req,res)=>{
 module.exports = {
     getAllTestsResult,
     getOneResultByTestId,
-    getAllTestsResultForOneReferee,
+    getAllTestsResultForOneUser,
     addTestResult,
     updateTestsResult,
     deleteTestsResult
