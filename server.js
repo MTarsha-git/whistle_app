@@ -9,6 +9,7 @@ const courtRoutes = require('./routes/court-routes')
 const workoutAndTestRoutes = require('./routes/workoutAndTest-routes')
 const testResultRoutes = require('./routes/testResult-routes')
 
+app.use(cors({origin: ['http://localhost:3000','http://localhost:3001'], credentials: true}))
 
 
 app.use(express.urlencoded({extended:true}))
