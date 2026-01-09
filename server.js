@@ -1,4 +1,5 @@
 const express = require('express')
+const path = require('path')
 const db = require('./models')
 const app = express()
 const roleRoutes = require('./routes/role-routes')
@@ -13,6 +14,8 @@ const testResultRoutes = require('./routes/testResult-routes')
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 
+// serve uploaded files (e.g., images) from /uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 app.use('/api/role',roleRoutes)
 app.use('/api/user',userRoutes)

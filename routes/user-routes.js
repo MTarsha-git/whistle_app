@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const user = require('../controllers/user-controller')
+const upload = require('../config/multer')
 
 router.get('/getAllUsers',user.getAllUsers);
 
@@ -10,9 +11,9 @@ router.get('/getAllRefereeAssessor',user.getAllRefereeAssessor);
 
 router.get('/getUser/:id', user.getOneUser);
 
-router.post('/createUser', user.createUser);
+router.post('/createUser', upload.single('photo'), user.createUser);
 
-router.patch('/editUser/:id', user.updateUser);
+router.patch('/editUser/:id', upload.single('photo'), user.updateUser);
 
 router.delete('/deleteUser/:id', user.deleteUser);
 

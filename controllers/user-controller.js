@@ -73,7 +73,7 @@ const createUser = async (req, res) => {
               phoneNumber: req.body.phoneNumber,
               birthDate: req.body.birthDate,
               address: req.body.address,
-              photo: req.body.photo,
+              photo: req.file ? `/uploads/${req.file.filename}` : req.body.photo,
               RefereeId: referee.id,
               RoleId: req.body.RoleId
             }, { transaction: t });
@@ -92,7 +92,7 @@ else{
       phoneNumber: req.body.phoneNumber,
       birthDate: req.body.birthDate,
       address: req.body.address,
-      photo: req.body.photo,
+      photo: req.file ? `/uploads/${req.file.filename}` : req.body.photo,
       RoleId: req.body.RoleId
     })
 
@@ -112,7 +112,7 @@ const updateUser = (req, res ) => {
         phoneNumber : req.body.phoneNumber,
         birthDate   : req.body.birthDate,
         address  : req.body.address,
-        photo   : req.body.photo,
+        photo   : req.file ? `/uploads/${req.file.filename}` : req.body.photo,
         RoleId : req.body.RoleId
         
         },{where:{id:req.params.id}})
