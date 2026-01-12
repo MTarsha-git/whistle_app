@@ -14,6 +14,8 @@ router.get('/getManagersForOneTeam/:TeamName', teamController.getManagersForOneT
 
 router.delete('/deleteTeam/:TeamName', teamController.deleteTeam);
 
+router.delete('/deletePlayers/:TeamName', teamController.deletePlayers);
+
 router.patch('/updateTeam/:TeamName', teamController.updateTeam);
 
 /*my api for team:
@@ -23,6 +25,7 @@ http://localhost:3000/api/team/getOneTeam/:TeamName
 http://localhost:3000/api/team/getPlayersForOneTeam/:TeamName
 http://localhost:3000/api/team/getManagersForOneTeam/:TeamName
 http://localhost:3000/api/team/deleteTeam/:TeamName
+http://localhost:3000/api/team/deletePlayers/:TeamName
 http://localhost:3000/api/team/updateTeam/:TeamName
 
 

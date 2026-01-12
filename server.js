@@ -9,7 +9,7 @@ const courtRoutes = require('./routes/court-routes')
 const workoutAndTestRoutes = require('./routes/workoutAndTest-routes')
 const testResultRoutes = require('./routes/testResult-routes')
 const teamRoutes = require('./routes/team-routes')
-
+const degreeRoutes = require('./routes/degree-routes')
 
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
@@ -24,6 +24,7 @@ app.use('/api/court',courtRoutes)
 app.use('/api/workoutAndTest',workoutAndTestRoutes)
 app.use('/api/testResult',testResultRoutes)
 app.use('/api/team',teamRoutes)
+app.use('/api/degree',degreeRoutes)
 
 db.sequelize.sync({alter:true}).then(()=>{
     app.listen(3000,()=>console.log('server listening in port 3000'))
