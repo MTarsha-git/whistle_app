@@ -55,6 +55,7 @@ const getOneUser = async (req, res) => {
         return res.status(400).send(err);
     }
 };
+
 const createUser = async (req, res) => {
     if(req.body.RoleId == 3){
      const t = await db.sequelize.transaction();

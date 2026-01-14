@@ -12,7 +12,12 @@ module.exports = (sequelize,Datatype)=>{
             type:Datatype.BOOLEAN,
             allowNull:false
         },// false for friendly , true for official
-        
+        HTeamColor:{
+            type:Datatype.STRING,
+            allowNull:false},
+        ATeamColor:{
+            type:Datatype.STRING,
+            allowNull:false}
     })
     Match.associate = models => {
         Match.belongsTo(models.Court, {
@@ -24,6 +29,11 @@ module.exports = (sequelize,Datatype)=>{
             foreignKey: { name: 'DegreeId', allowNull: false },
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE'
+        });
+        Match.belongsToMany(models.Team, {
+            through: models.MatchTeams,
+            foreignKey: 'MatchId',
+            otherKey: 'TeamId'
         });
     }
     return Match    

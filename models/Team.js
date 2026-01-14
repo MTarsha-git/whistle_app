@@ -33,10 +33,6 @@ module.exports = (sequelize,Datatype)=>{
             type:Datatype.STRING,
             allowNull:true
         },
-        Degree:{
-            type:Datatype.STRING,
-            allowNull:true
-        },
         Players:{
             type:Datatype.JSON,
             allowNull:false
@@ -46,7 +42,18 @@ module.exports = (sequelize,Datatype)=>{
             allowNull:true
         }
     })
-
+    Team.associate = models => {
+        Team.belongsTo(models.Degree, {
+            foreignKey: { name: 'DegreeId', allowNull: false },
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+        });
+        Team.belongsToMany(models.Match, {
+            through: models.MatchTeams,
+            foreignKey: 'TeamId',
+            otherKey: 'MatchId'
+        });
+    }
 
     return Team
 }

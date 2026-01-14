@@ -9,7 +9,7 @@ const courtRoutes = require('./routes/court-routes')
 const workoutAndTestRoutes = require('./routes/workoutAndTest-routes')
 const testResultRoutes = require('./routes/testResult-routes')
 const teamRoutes = require('./routes/team-routes')
-const degreeRoutes = require('./routes/degree-routes')
+const degreeRoutes = require('./routes/Degree-routes')
 
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())

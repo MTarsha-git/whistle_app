@@ -408,5 +408,4 @@ module.exports = {
     deleteTeam,
     deletePlayers,
     updateTeam
-
 }
