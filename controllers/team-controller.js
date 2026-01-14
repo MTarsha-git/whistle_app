@@ -3,7 +3,7 @@ const db = require("../models");
 const createTeam = async (req, res) => {
     try{
         const { TeamName, TeamManager, Coach, AssistantCoach, KeeperCoach, PhysicalTherapist,
-             MediaOfficial, EquipmentManager, Degree, Players, TeamLogo } = req.body;
+             MediaOfficial, EquipmentManager, DegreeId, Players, TeamLogo } = req.body;
 
         // Parse and normalize Players so DB stores structured data (not a string)
         let players = Players;
@@ -30,7 +30,7 @@ const createTeam = async (req, res) => {
 
         // Validate required fields (players must be present and non-empty)
         if(!TeamName || !TeamManager || !Coach || !AssistantCoach || !KeeperCoach || !PhysicalTherapist ||
-             !MediaOfficial || !EquipmentManager || !Degree || !players || players.length === 0 || !TeamLogo){
+             !MediaOfficial || !EquipmentManager || !DegreeId || !players || players.length === 0 || !TeamLogo){
             return res.status(400).send({
                 message: 'All fields are required to create a team'
             });
@@ -45,7 +45,7 @@ const createTeam = async (req, res) => {
             PhysicalTherapist,
             MediaOfficial,
             EquipmentManager,
-            Degree,
+            DegreeId,
             Players: players,
             TeamLogo
         });

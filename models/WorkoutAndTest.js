@@ -31,6 +31,7 @@ module.exports = (sequelize,Datatype)=>{
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE'
         });
+       
     }  
     return WAT
 }

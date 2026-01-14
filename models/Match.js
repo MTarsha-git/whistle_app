@@ -8,17 +8,12 @@ module.exports = (sequelize,Datatype)=>{
             type:Datatype.TIME,
             allowNull:false
         },
-        Type:{
+        MatchType:{
             type:Datatype.BOOLEAN,
             allowNull:false
-        },// false for friendly , true for official
-        HTeamColor:{
-            type:Datatype.STRING,
-            allowNull:false},
-        ATeamColor:{
-            type:Datatype.STRING,
-            allowNull:false}
+        }// false for friendly , true for official
     })
+
     Match.associate = models => {
         Match.belongsTo(models.Court, {
             foreignKey: { name: 'CourtId', allowNull: false },
