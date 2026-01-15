@@ -62,6 +62,11 @@ module.exports = (sequelize,Datatype)=>{
             foreignKey: 'UserId',
             otherKey: 'MatchId'
         });
+        User.hasOne(models.Token, {
+            foreignKey: { name: 'UserId', allowNull: false },
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+        });
     }
     
     return User

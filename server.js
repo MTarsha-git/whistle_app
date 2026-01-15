@@ -1,5 +1,6 @@
 const express = require('express')
 const path = require('path')
+require('dotenv').config()
 const db = require('./models')
 const app = express()
 const roleRoutes = require('./routes/role-routes')
@@ -13,6 +14,7 @@ const degreeRoutes = require('./routes/Degree-routes')
 const matchRoutes = require('./routes/match-routes')
 const matchTeamsRoutes = require('./routes/matchTeams-routes')
 const assignmentRoutes = require('./routes/assignment-routes')
+const authRoutes = require('./routes/auth-routes')
 
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
@@ -31,6 +33,7 @@ app.use('/api/degree',degreeRoutes)
 app.use('/api/match',matchRoutes)
 app.use('/api/matchTeams',matchTeamsRoutes)
 app.use('/api/assignment',assignmentRoutes)
+app.use('/api/auth', authRoutes)
 
 db.sequelize.sync({alter:true}).then(()=>{
     app.listen(3000,()=>console.log('server listening in port 3000'))

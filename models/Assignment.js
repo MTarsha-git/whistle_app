@@ -15,7 +15,13 @@ module.exports = (sequelize, DataTypes) => {
         model: 'Match',
         key: 'id'
       }
+    },
+    isAssessor:{
+      type:DataTypes.BOOLEAN,
+      allowNull:true,
+      default:false
     }
+
   }, {
     timestamps: false,
     indexes: [

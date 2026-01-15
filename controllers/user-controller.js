@@ -1,5 +1,6 @@
 const db = require('../models')
-//const Referee = require('../models/Referee')
+const bcrypt = require('bcrypt');
+
 
 const getAllUsers = (req,res)=>{
     db.User.findAll()
@@ -57,52 +58,59 @@ const getOneUser = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
-    if(req.body.RoleId == 3){
-     const t = await db.sequelize.transaction();
-         try {
-            const referee = await db.Referee.create({
-              degree: req.body.degree,
-              specification: req.body.specification,
-              status: req.body.status,
-              AFCNumber: req.body.AFCNumber
-              }, { transaction: t });
+    try {
+        const existingEmail = await db.User.findOne({ where: { email: req.body.email } })
+        if (existingEmail) {
+            return res.status(400).json({ message: 'Email already in use' });
+        }
 
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+        if (req.body.RoleId == 3) {
+            const t = await db.sequelize.transaction();
+            try {
+                const referee = await db.Referee.create({
+                    degree: req.body.degree,
+                    specification: req.body.specification,
+                    status: req.body.status,
+                    AFCNumber: req.body.AFCNumber
+                }, { transaction: t });
+
+                const user = await db.User.create({
+                    userName: req.body.userName,
+                    email: req.body.email,
+                    password: hashedPassword,
+                    phoneNumber: req.body.phoneNumber,
+                    birthDate: req.body.birthDate,
+                    address: req.body.address,
+                    photo: req.file ? `/uploads/${req.file.filename}` : req.body.photo,
+                    RefereeId: referee.id,
+                    RoleId: req.body.RoleId
+                }, { transaction: t });
+
+                await t.commit();
+                return res.status(201).json({ message: 'User and Referee created', user, referee });
+            } catch (err) {
+                await t.rollback();
+                return res.status(400).json({ message: 'Error creating records', error: err.message });
+            }
+        } else {
             const user = await db.User.create({
-              userName: req.body.userName,
-              email: req.body.email,
-              password: req.body.password,
-              phoneNumber: req.body.phoneNumber,
-              birthDate: req.body.birthDate,
-              address: req.body.address,
-              photo: req.file ? `/uploads/${req.file.filename}` : req.body.photo,
-              RefereeId: referee.id,
-              RoleId: req.body.RoleId
-            }, { transaction: t });
+                userName: req.body.userName,
+                email: req.body.email,
+                password: hashedPassword,
+                phoneNumber: req.body.phoneNumber,
+                birthDate: req.body.birthDate,
+                address: req.body.address,
+                photo: req.file ? `/uploads/${req.file.filename}` : req.body.photo,
+                RoleId: req.body.RoleId
+            })
 
-            await t.commit();
-            res.status(201).json({ message: 'User and Referee created', user, referee });
-  }      catch (err) {
-            await t.rollback();
-            res.status(400).json({ message: 'Error creating records', error: err.message });
-  }}
-else{
-     const user = db.User.create({
-      userName: req.body.userName,
-      email: req.body.email,
-      password: req.body.password,
-      phoneNumber: req.body.phoneNumber,
-      birthDate: req.body.birthDate,
-      address: req.body.address,
-      photo: req.file ? `/uploads/${req.file.filename}` : req.body.photo,
-      RoleId: req.body.RoleId
-    })
-
-    .then((user)=> {
-    res.status(201).json({ message: 'User created', user });
-    })
-    .catch((err) => {
-    res.status(400).json({ message: 'Error creating records', error: err.message });
-  })}
+            return res.status(201).json({ message: 'User created', user });
+        }
+    } catch (err) {
+        return res.status(500).json({ message: 'Error creating user', error: err.message });
+    }
 };
 
 const updateUser = (req, res ) => {
