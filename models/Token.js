@@ -1,5 +1,3 @@
-
-
 module.exports = (sequelize, Datatype) => {
     const Token = sequelize.define("Token", {
         token: {
@@ -12,12 +10,13 @@ module.exports = (sequelize, Datatype) => {
         },
     });
 
+    Token.associate = models => {
+        Token.belongsTo(models.User, {
+            foreignKey: { name: 'UserId', allowNull: false },
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+        });
+    }
+
     return Token;
 };
-Token.associate = models => {
-    Token.belongsTo(models.User, {
-        foreignKey: { name: 'UserId', allowNull: false },
-        onDelete: 'NO ACTION',
-        onUpdate: 'NO ACTION'
-    });
-}
