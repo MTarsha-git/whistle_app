@@ -121,7 +121,7 @@ const getAllTeams = async (req, res) => {
 
 const getOneTeamByName = async (req, res) => {
     try {
-        const team = await db.Team.findOne({ where: { TeamName: req.params.TeamName } });
+        const team = await db.Team.findOne({ where: { TeamName: req.params.TeamName },include: db.Degree });
         if (!team) {
             return res.status(404).send({
                 message: 'Team not found'

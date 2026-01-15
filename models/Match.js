@@ -1,7 +1,7 @@
 module.exports = (sequelize,Datatype)=>{
     const Match = sequelize.define("Match",{
         Date:{
-            type:Datatype.DATE,
+            type:Datatype.DATEONLY,
             allowNull:false
         },
         time:{
@@ -29,6 +29,11 @@ module.exports = (sequelize,Datatype)=>{
             through: models.MatchTeams,
             foreignKey: 'MatchId',
             otherKey: 'TeamId'
+        });
+        Match.belongsToMany(models.User, {
+            through: models.Assignment,
+            foreignKey: 'MatchId',
+            otherKey: 'UserId'
         });
     }
     return Match    

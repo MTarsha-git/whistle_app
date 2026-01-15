@@ -57,6 +57,11 @@ module.exports = (sequelize,Datatype)=>{
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE'
         });
+        User.belongsToMany(models.Match, {
+            through: models.Assignment,
+            foreignKey: 'UserId',
+            otherKey: 'MatchId'
+        });
     }
     
     return User

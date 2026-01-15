@@ -15,6 +15,7 @@ const createMatch = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
+
 const getMatches = async (req, res) => {
   try {
     const matches = await db.Match.findAll();

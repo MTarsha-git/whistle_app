@@ -1,18 +1,18 @@
 module.exports = (sequelize, DataTypes) => {
-  const MatchTeams = sequelize.define('MatchTeams', {
+  const Assignment = sequelize.define('Assignment', {
+    UserId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'User',
+        key: 'id'
+      }
+    },
     MatchId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: 'Match',
-        key: 'id'
-      }
-    },
-    TeamId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Team',
         key: 'id'
       }
     }
@@ -21,10 +21,10 @@ module.exports = (sequelize, DataTypes) => {
     indexes: [
       {
         unique: true,
-        fields: ['MatchId', 'TeamId']
+        fields: ['UserId', 'MatchId']
       }
     ]
   });
 
-  return MatchTeams;
+  return Assignment;
 };
