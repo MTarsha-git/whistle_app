@@ -1,5 +1,6 @@
 const db = require('../models');
 
+
 const assigningATaskToReferee = async (req, res) => {
     try {
         const { MatchId, UserId } = req.body; // add Task could be 'Main Referee', 'Assistant Referee', etc.
@@ -19,7 +20,7 @@ const assigningATaskToReferee = async (req, res) => {
         }
         // Check maximum assignments for the match
         const countOfAssignments = await db.Assignment.count({ where: { MatchId } });
-        if (countOfAssignments >= 6) {
+        if (countOfAssignments >= 4) {
             return res.status(400).send({ message: 'Maximum assignments reached for this match' });
         }// Check if User exists and is a referee
         const isReferee = await db.User.findByPk(UserId,
@@ -57,23 +58,38 @@ const assigningATaskToReferee = async (req, res) => {
             if (countAssignmentsOfRefereeInDate >= 1) {
                 return res.status(400).send({ message: 'Referee already has one assignments on the same date' });
             }
-            const conflict = await db.WAT.findOne({
-                where: { Date: matchCreated.Date , UserId ,Time:{
-                   
-                    }
-                } 
-            });
+            const newAssignment = await db.Assignment.create({MatchId,UserId})
+            return res.status(200).send({
+                message:"an assignment is created ",
+                data:newAssignment
+            })
         }
-        
+
         if (countAssignmentsOfRefereeInDate >= 3) {
             return res.status(400).send({ message: 'Referee already has two assignments on the same date' });
         }
-
-
-        
+        const AllAssignmentsOfRefereeInDate = await db.Assignment.findAll({
+            where: {
+                UserId: UserId,
+                MatchId: { [db.Sequelize.Op.in]: idsOfMatchesInDate.map(m => m.id) }
+            }
+        });
+        if(AllAssignmentsOfRefereeInDate.length==0){
+            const newAssignment = await db.Assignment.create({MatchId,UserId})
+                return res.status(200).send({
+                message:"an assignment is created ",
+                data:newAssignment
+            })
+        }
         await db.Assignment.create({ MatchId, UserId });
         return res.status(201).send({ message: 'Assignment created successfully' });
     } catch (err) {
         return res.status(400).send(err);
     }
 };
+
+
+
+module.exports ={
+    assigningATaskToReferee
+}
