@@ -5,6 +5,6 @@ const auth = require('../middleware/auth-maddleware')
 const isAdmin = require('../middleware/isAdmin')
 
 // Admin home page data
-router.get('/home', auth, isAdmin, admin.getHome)
+router.get('/home', auth, isAdmin, admin.homePageForAdmin)
 
 module.exports = router
