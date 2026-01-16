@@ -36,17 +36,9 @@ app.use('/api/matchTeams',matchTeamsRoutes)
 app.use('/api/assignment',assignmentRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/admin', adminRoutes)
-async function ensureDefaultRoles() {
-    try {
-        await db.Role.findOrCreate({ where: { id: 1 }, defaults: { id: 1, subject: 'Admin' } })
-        await db.Role.findOrCreate({ where: { id: 2 }, defaults: { id: 2, subject: 'Referee Assessor' } })
-        await db.Role.findOrCreate({ where: { id: 3 }, defaults: { id: 3, subject: 'Referee' } })
-    } catch (e) {
-        console.warn('Unable to ensure default roles:', e.message)
-    }
-}
+
 
 db.sequelize.sync({ alter: true }).then(async () => {
-    await ensureDefaultRoles()
+
     app.listen(3000, () => console.log('server listening in port 3000'))
 })

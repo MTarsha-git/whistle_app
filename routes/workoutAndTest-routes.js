@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const WAT_controller = require('../controllers/workoutAndTest-controller')
+const notConfinedInMatch = require("../middleware/notConfinedInMatch")
 const auth = require('../middleware/auth-maddleware')
 const isAdmin = require('../middleware/isAdmin')
 
@@ -14,11 +15,11 @@ router.get('/getAllWorkouts',isAdmin,WAT_controller.getAllWorkouts);
  
 router.get('/getOneWAT/:id',WAT_controller.getOneWAT);
 
-router.post('/createWAT',isAdmin,WAT_controller.createWAT);
+router.post('/createWAT',isAdmin,notConfinedInMatch,WAT_controller.createWAT);
 
 router.delete('/deleteWAT/:id',isAdmin,WAT_controller.deleteWAT);
 
-router.patch('/updateWAT/:id',isAdmin,WAT_controller.updateWAT);
+router.patch('/updateWAT/:id',isAdmin,notConfinedInMatch,WAT_controller.updateWAT);
 
 module.exports = router
 
