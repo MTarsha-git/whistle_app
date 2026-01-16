@@ -1,4 +1,5 @@
-const db = require("../models")
+const db = require("../models");
+const { all } = require("../routes/role-routes");
 
 const updateReferee = async (req,res) => {
     try {
@@ -34,7 +35,33 @@ const deleteOne = async (req, res) => {
         res.status(500).send({ message: 'Error deleting referee', error });
     }
 };
+
+const homePageForReferee = async(req,res) => {
+    try{
+        const allTests = await db.WAT.findAll({ where: { UserId: req.user.id ,TypeActivity:true},attributes: ['id'] });
+        const allResults = await db.WATResult.findAll({ where: { 
+            WATId:
+            { [db.Sequelize.Op.in]: allTests.map(test => test.id)}
+          } });
+        const totalWorkoutsForReferee = await db.WAT.count({ where: { UserId: req.user.id ,TypeActivity:false} });
+        const totalTestsForReferee = await db.WAT.count({ where: { UserId: req.user.id ,TypeActivity:true} });
+        const totalAssignedMatches = await db.Assignment.count({ where: { UserId: req.user.id,isAssessor:false } });
+        return res.status(200).send({
+            message: 'Referee dashboard stats fetched successfully',
+            data: {
+                totalAssignedMatches,
+                totalWorkoutsForReferee,
+                totalTestsForReferee,
+                allResults
+            }
+        });
+    }catch(err){
+        return res.status(400).send(err);
+    }
+};
+
 module.exports = {
 updateReferee,
-deleteOne
+deleteOne,
+homePageForReferee
 }

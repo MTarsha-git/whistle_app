@@ -1,6 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const degreeController = require('../controllers/degree-controller');
+const auth = require('../middleware/auth-maddleware');
+const isAdmin = require('../middleware/isAdmin');
+
+// All routes protected and only accessible by admin users
+router.use(auth);
+router.use(isAdmin);
 
 router.post('/createDegree', degreeController.createDegree);
 

@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const teamController = require('../controllers/team-controller');
+const auth = require('../middleware/auth-maddleware');
+const isAdmin = require('../middleware/isAdmin');
+// All routes protected and only accessible by admin users
+router.use(auth);
+router.use(isAdmin);
 
 router.post('/createTeam', teamController.createTeam);
 

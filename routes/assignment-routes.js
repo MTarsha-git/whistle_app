@@ -2,16 +2,19 @@ const express = require("express")
 const router = express.Router()
 const assignmentController = require("../controllers/assignment-controller")
 const checkTimeInWAT = require('../middleware/checkTimeInWAT')
+const auth = require('../middleware/auth-maddleware')
+const isAdmin = require('../middleware/isAdmin')
 
-router.post("/assigningATaskToReferee",checkTimeInWAT,assignmentController.assigningATaskToReferee)
 
-router.post("/assigningTaskToAssessor",assignmentController.assigningTaskToAssessor)
+router.post("/assigningATaskToReferee",auth,isAdmin,checkTimeInWAT,assignmentController.assigningATaskToReferee)
 
-router.delete("/removeAssigningFromRefereeOrAssessor",assignmentController.removeAssigningFromRefereeOrAssessor)
+router.post("/assigningTaskToAssessor",auth,isAdmin,assignmentController.assigningTaskToAssessor)
+ 
+router.delete("/removeAssigningFromRefereeOrAssessor",auth,isAdmin,assignmentController.removeAssigningFromRefereeOrAssessor)
 
-router.get("/getAllRefereeInMatch/:MatchId",assignmentController.getAllRefereeInMatch)
+router.get("/getAllRefereeInMatch/:MatchId",auth,isAdmin,assignmentController.getAllRefereeInMatch)
 
-router.get("/getRefereeAssessorToMatch/:MatchId",assignmentController.getRefereeAssessorToMatch)
+router.get("/getRefereeAssessorToMatch/:MatchId",auth,isAdmin,assignmentController.getRefereeAssessorToMatch)
 
 module.exports = router
 

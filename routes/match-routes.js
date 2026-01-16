@@ -3,14 +3,20 @@ const router = express.Router();
 const matchController = require('../controllers/match-controller');
 const notConfinedInMatch = require('../middleware/notConfinedInMatch');
 const notConfinedInWAT = require('../middleware/notConfinedInWAT');
+const auth = require('../middleware/auth-maddleware');
+const isAdmin = require('../middleware/isAdmin');
+const isReferee = require('../middleware/isReferee');
+// All routes protected: require authentication
+router.use(auth);
 
-router.post('/createMatch', notConfinedInMatch, notConfinedInWAT, matchController.createMatch);
 
-router.get('/getAllMatches', matchController.getMatches);
+router.post('/createMatch', isAdmin, notConfinedInMatch, notConfinedInWAT, matchController.createMatch);
 
-router.get('/getOneMatch/:id', matchController.getOneMatch);
+router.get('/getAllMatches', isAdmin, matchController.getMatches);
 
-router.delete('/deleteMatch/:id', matchController.deleteMatch);
+router.get('/getOneMatch/:id', isReferee, matchController.getOneMatch);
+
+router.delete('/deleteMatch/:id', isAdmin, matchController.deleteMatch);
 
 module.exports = router;
 /*

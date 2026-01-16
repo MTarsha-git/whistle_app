@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 
 // Verify Bearer token and attach user info to req
+// Used in routes to protect endpoints
+//
 module.exports = function authMiddleware(req, res, next) {
 	const authHeader = req.headers['authorization'] || req.headers['Authorization'];
 	if (!authHeader || !authHeader.startsWith('Bearer ')) {

@@ -113,31 +113,48 @@ const createUser = async (req, res) => {
     }
 };
 
-const updateUser = (req, res ) => {
-    db.User.update({
-        userName:req.body.userName,
-        email : req.body.email,
-        password : req.body.password,
-        phoneNumber : req.body.phoneNumber,
-        birthDate   : req.body.birthDate,
-        address  : req.body.address,
-        photo   : req.file ? `/uploads/${req.file.filename}` : req.body.photo,
-        RoleId : req.body.RoleId
-        
-        },{where:{id:req.params.id}})
-    .then((response)=> {
-        res.status(201).send({
+const updateUser = async (req, res ) => {
+    try {
+        // Check that the user to update exists
+        const user = await db.User.findOne({ where: { id: req.params.id } });
+        if (!user) {
+            return res.status(404).send({
+                message: 'User not found'
+            });
+        }
+
+        // If email is being updated, ensure it is not already used by another user
+        if (req.body.email) {
+            const existingUser = await db.User.findOne({ where: { email: req.body.email } });
+            if (existingUser && existingUser.id !== user.id) {
+                return res.status(400).send({
+                    message: 'Email already in use by another user'
+                });
+            }
+        }
+
+        const [updatedCount] = await db.User.update({
+            userName: req.body.userName,
+            email: req.body.email,
+            password: req.body.password,
+            phoneNumber: req.body.phoneNumber,
+            birthDate: req.body.birthDate,
+            address: req.body.address,
+            photo: req.file ? `/uploads/${req.file.filename}` : req.body.photo,
+            RoleId: req.body.RoleId
+        }, { where: { id: req.params.id } });
+
+        return res.status(201).send({
             message: 'User created successfully',
-            data: response
-        })
-    }) 
-    .catch(err => {
-        res.status(400).send({
+            data: updatedCount
+        });
+    } catch (err) {
+        return res.status(400).send({
             message: 'Error creating user',
             error: err.message
-        })
-    })
-};
+        });
+    }
+    };
 const deleteUser = async(req,res)=>{
     try{
         const user = await db.User.findOne({ where: { id: req.params.id } });
@@ -162,6 +179,7 @@ const deleteUser = async(req,res)=>{
             })
         }  
 };
+
 module.exports = {
     getAllUsers,
     getAllReferee,
