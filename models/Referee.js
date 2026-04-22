@@ -7,7 +7,7 @@ module.exports = (sequelize,Datatype)=>{
         specification:{
             type:Datatype.STRING,
             allowNull:false,
-            validate:{isAlphanumeric:true}
+            //validate:{isAlphanumeric:true}
         },
         status:{
             type:Datatype.BOOLEAN,
