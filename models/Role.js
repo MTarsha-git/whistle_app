@@ -3,8 +3,7 @@ module.exports=(sequelize,Datatype)=>{
         subject:{
             type:Datatype.STRING(45),  
             allowNull:false
-        },
-
+        }
     },{timestamps:false})
        
     

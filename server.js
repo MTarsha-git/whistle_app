@@ -16,6 +16,7 @@ const matchTeamsRoutes = require('./routes/matchTeams-routes')
 const assignmentRoutes = require('./routes/assignment-routes')
 const adminRoutes = require('./routes/admin-routes')
 const authRoutes = require('./routes/auth-routes')
+const { FORCE } = require('sequelize/lib/index-hints')
 
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())

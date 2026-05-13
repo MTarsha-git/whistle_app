@@ -1,0 +1,49 @@
+module.exports = (sequelize,Datatype)=>{
+    const Player = sequelize.define("Player",{
+        PlayerName:{
+            type:Datatype.STRING,
+            allowNull:false
+        },
+        Number:{
+            type:Datatype.INTEGER,
+            allowNull:false,
+            unique:true
+        },
+        YCard:{
+            type:Datatype.INTEGER,
+            allowNull:false,
+            defaultValue:0
+            
+        },
+        RCard:{
+            type:Datatype.INTEGER,
+            allowNull:true,
+            defaultValue:0
+        },
+        goal:{
+            type:Datatype.INTEGER,
+            allowNull:true,
+            defaultValue:0
+        },
+        onGoal:{
+            type:Datatype.INTEGER,
+            allowNull:true,
+            defaultValue: 0
+        },
+        Position:{
+            type:Datatype.STRING(4),
+            allowNull:true
+        },
+        Photo:{
+            type:Datatype.STRING,
+            allowNull:true
+        }
+    })
+    Player.associate = models => {
+        Player.belongsTo(models.Team, {
+            foreignKey: {name:'TeamId',allowNull:false}
+            
+        })
+    }
+    return Player
+}
