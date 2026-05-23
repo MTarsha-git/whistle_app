@@ -17,7 +17,10 @@ const assignmentRoutes = require('./routes/assignment-routes')
 const adminRoutes = require('./routes/admin-routes')
 const authRoutes = require('./routes/auth-routes')
 const { FORCE } = require('sequelize/lib/index-hints')
-
+const cors = require('cors')
+ 
+app.use(cors({ origin: ["http://localhost:3000", "http://localhost:3001"],
+  credentials: true}))
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 
