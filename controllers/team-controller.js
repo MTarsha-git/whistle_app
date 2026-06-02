@@ -5,32 +5,9 @@ const createTeam = async (req, res) => {
         const { TeamName, TeamManager, Coach, AssistantCoach, KeeperCoach, PhysicalTherapist,
              MediaOfficial, EquipmentManager, DegreeId, Players, TeamLogo } = req.body;
 
-        // Parse and normalize Players so DB stores structured data (not a string)
-        let players = Players;
-        if (typeof players === 'string') {
-            try { players = JSON.parse(players); } catch (e) {
-                return res.status(400).send({ message: 'Invalid Players JSON', error: e.message });
-            }
-        }
-
-        if (players == null) players = [];
-        if (!Array.isArray(players)) players = [players];
-
-        players = players.map(p => {
-            if (p == null || typeof p !== 'object') return p;
-            const normalized = { ...p };
-            ['num', 'sub', 'YCard', 'RCard', 'goal', 'onGoal'].forEach(k => {
-                if (normalized[k] !== undefined && normalized[k] !== null) {
-                    const n = Number(normalized[k]);
-                    normalized[k] = Number.isNaN(n) ? normalized[k] : n;
-                }
-            });
-            return normalized;
-        });
-
         // Validate required fields (players must be present and non-empty)
         if(!TeamName || !TeamManager || !Coach || !AssistantCoach || !KeeperCoach || !PhysicalTherapist ||
-             !MediaOfficial || !EquipmentManager || !DegreeId || !players || players.length === 0 || !TeamLogo){
+             !MediaOfficial || !EquipmentManager || !DegreeId || !TeamLogo){
             return res.status(400).send({
                 message: 'All fields are required to create a team'
             });
@@ -46,7 +23,6 @@ const createTeam = async (req, res) => {
             MediaOfficial,
             EquipmentManager,
             DegreeId,
-            Players: players,
             TeamLogo
         });
         return res.status(201).send({
@@ -69,47 +45,9 @@ const getAllTeams = async (req, res) => {
                 message: 'No teams found'
             });
         }
-
-        // Map instances to plain objects and normalize Players
-        const teamsData = teams.map(team => {
-            const obj = team.get({ plain: true });
-            let players = obj.Players;
-
-            // Ensure players is an array and parse if it's a JSON string
-            if (players == null) {
-                players = [];
-            } else if (typeof players === 'string') {
-                try {
-                    players = JSON.parse(players);
-                } catch (e) {
-                    players = [];
-                }
-            }
-
-            if (!Array.isArray(players)) {
-                players = [players];
-            }
-
-            // Normalize player fields: convert numeric-like strings to numbers
-            players = players.map(p => {
-                if (p == null || typeof p !== 'object') return p;
-                const normalized = { ...p };
-                ['num', 'sub', 'YCard', 'RCard', 'goal', 'onGoal'].forEach(k => {
-                    if (normalized[k] !== undefined && normalized[k] !== null) {
-                        const n = Number(normalized[k]);
-                        normalized[k] = Number.isNaN(n) ? normalized[k] : n;
-                    }
-                });
-                return normalized;
-            });
-
-            obj.Players = players;
-            return obj;
-        });
-
         return res.status(200).send({
             message: 'Teams retrieved successfully',
-            data: teamsData
+            data: teams
         });
     } catch (err) {
         return res.status(400).send({
@@ -121,48 +59,21 @@ const getAllTeams = async (req, res) => {
 
 const getOneTeamByName = async (req, res) => {
     try {
-        const team = await db.Team.findOne({ where: { TeamName: req.params.TeamName },include: db.Degree });
+        const team = await db.Team.findOne({ 
+            where: { TeamName: req.params.TeamName },
+            include: db.Degree });
+
         if (!team) {
             return res.status(404).send({
                 message: 'Team not found'
             });
         }
-
-        // Convert instance to plain object and normalize Players
-        const teamObj = team.get({ plain: true });
-        let players = teamObj.Players;
-
-        if (players == null) {
-            players = [];
-        } else if (typeof players === 'string') {
-            try {
-                players = JSON.parse(players);
-            } catch (e) {
-                players = [];
-            }
-        }
-
-        if (!Array.isArray(players)) {
-            players = [players];
-        }
-
-        players = players.map(p => {
-            if (p == null || typeof p !== 'object') return p;
-            const normalized = { ...p };
-            ['num', 'sub', 'YCard', 'RCard', 'goal', 'onGoal'].forEach(k => {
-                if (normalized[k] !== undefined && normalized[k] !== null) {
-                    const n = Number(normalized[k]);
-                    normalized[k] = Number.isNaN(n) ? normalized[k] : n;
-                }
-            });
-            return normalized;
-        });
-
-        teamObj.Players = players;
-
+        const players = await db.Player.findAll({ 
+            where: { TeamId: team.id } });
+       
         return res.status(200).send({
-            message: 'Players retrieved successfully',
-            data: teamObj
+            message: 'Team retrieved successfully',
+            data: { ...team.get({ plain: true }), Players: players }
         });
     } catch (err) {
         return res.status(400).send({
@@ -324,67 +235,68 @@ const updateTeam = async (req, res) => {
             });
         }
 
-        // Handle Players field specially: allow patching or replacing entries
-        if (updates.Players !== undefined) {
-            let incoming = updates.Players;
-            if (typeof incoming === 'string') {
-                try { incoming = JSON.parse(incoming); } catch (e) {
-                    return res.status(400).send({ message: 'Invalid Players JSON', error: e.message });
-                }
-            }
-
-            if (!Array.isArray(incoming)) incoming = [incoming];
-
-            // Get existing players
-            const teamObj = team.get({ plain: true });
-            let existing = teamObj.Players;
-            if (typeof existing === 'string') {
-                try { existing = JSON.parse(existing); } catch (e) { existing = []; }
-            }
-            if (existing == null) existing = [];
-            if (!Array.isArray(existing)) existing = [existing];
-
-            // If client requests full replace (send replacePlayers: true) we replace, otherwise we patch/merge
-            const replaceFlag = updates.replacePlayers === true || updates.PlayersReplace === true;
-            let finalPlayers;
-
-            const normalizePlayer = (p) => {
-                if (p == null || typeof p !== 'object') return p;
-                const normalized = { ...p };
-                ['num', 'sub', 'YCard', 'RCard', 'goal', 'onGoal'].forEach(k => {
-                    if (normalized[k] !== undefined && normalized[k] !== null) {
-                        const n = Number(normalized[k]);
-                        normalized[k] = Number.isNaN(n) ? normalized[k] : n;
-                    }
-                });
-                return normalized;
-            };
-
-            if (replaceFlag) {
-                finalPlayers = incoming.map(normalizePlayer);
-            } else {
-                // Patch/merge each incoming object into existing players by id, then num, then name
-                incoming.forEach(patch => {
-                    if (patch == null || typeof patch !== 'object') return;
-                    let idx = -1;
-                    if (patch.id !== undefined) idx = existing.findIndex(e => e && e.id == patch.id);
-                    if (idx === -1 && patch.num !== undefined) idx = existing.findIndex(e => e && e.num == patch.num);
-                    if (idx === -1 && patch.name !== undefined) idx = existing.findIndex(e => e && e.name == patch.name);
-
-                    if (idx !== -1) {
-                        existing[idx] = { ...existing[idx], ...patch };
-                    } else {
-                        existing.push(patch);
-                    }
-                });
-                finalPlayers = existing.map(normalizePlayer);
-            }
-
-            updates.Players = finalPlayers;
-            // cleanup any replace flag provided by client
-            delete updates.replacePlayers;
-            delete updates.PlayersReplace;
-        }
+//        // Handle Players field specially: allow patching or replacing entries
+//        if (updates.Players !== undefined) {
+//            let incoming = updates.Players;
+//            if (typeof incoming === 'string') {
+//                try { incoming = JSON.parse(incoming); } catch (e) {
+//                    return res.status(400).send({ message: 'Invalid Players JSON', error: e.message });
+//                }
+//            }
+//
+//            if (!Array.isArray(incoming)) incoming = [incoming];
+//
+//            // Get existing players
+//            const teamObj = team.get({ plain: true });
+//            let existing = teamObj.Players;
+//            if (typeof existing === 'string') {
+//                try { existing = JSON.parse(existing); } catch (e) { existing = []; }
+//            }
+//            if (existing == null) existing = [];
+//            if (!Array.isArray(existing)) existing = [existing];
+//
+//            // If client requests full replace (send replacePlayers: true) we replace, otherwise we patch/merge
+//            const replaceFlag = updates.replacePlayers === true || updates.PlayersReplace === true;
+//            let finalPlayers;
+//
+//            const normalizePlayer = (p) => {
+//                if (p == null || typeof p !== 'object') return p;
+//                const normalized = { ...p };
+//                ['num', 'sub', 'YCard', 'RCard', 'goal', 'onGoal'].forEach(k => {
+//                    if (normalized[k] !== undefined && normalized[k] !== null) {
+//                        const n = Number(normalized[k]);
+//                        normalized[k] = Number.isNaN(n) ? normalized[k] : n;
+//                    }
+//                });
+//                return normalized;
+//            };
+//
+//            if (replaceFlag) {
+//                finalPlayers = incoming.map(normalizePlayer);
+//            } else {
+//                // Patch/merge each incoming object into existing players by id, then num, then name
+//                incoming.forEach(patch => {
+//                    if (patch == null || typeof patch !== 'object') return;
+//                    let idx = -1;
+//                    if (patch.id !== undefined) idx = existing.findIndex(e => e && e.id == patch.id);
+//                    if (idx === -1 && patch.num !== undefined) idx = existing.findIndex(e => e && e.num == patch.num);
+//                    if (idx === -1 && patch.name !== undefined) idx = existing.findIndex(e => e && e.name == patch.name);
+//
+//                    if (idx !== -1) {
+//                        existing[idx] = { ...existing[idx], ...patch };
+//                    } else {
+//                        existing.push(patch);
+//                    }
+//                });
+//                finalPlayers = existing.map(normalizePlayer);
+//            }
+//
+//            updates.Players = finalPlayers;
+//            // cleanup any replace flag provided by client
+//            delete updates.replacePlayers;
+//
+//            delete updates.PlayersReplace;
+//        }
 
         const updatedTeam = await team.update(updates);
         return res.status(200).send({

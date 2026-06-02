@@ -148,7 +148,9 @@ const removeAssigningFromRefereeOrAssessor = async(req, res) => {
 
 const getAllRefereeInMatch = async(req, res) => {
     try{
-        const allReferees = await db.Assignment.findAll({ where: { MatchId: req.params.MatchId,isAssessor:false } });
+        const allReferees = await db.Assignment.findAll({ where: { MatchId: req.params.MatchId,isAssessor:false },
+            include: [{ model: db.User, attributes: ['userName'] }]}
+        );
         
         if (allReferees.length === 0) {
             return res.status(404).send({ message: 'No referee found for this match' });

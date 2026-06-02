@@ -10,6 +10,7 @@ const courtRoutes = require('./routes/court-routes')
 const workoutAndTestRoutes = require('./routes/workoutAndTest-routes')
 const testResultRoutes = require('./routes/testResult-routes')
 const teamRoutes = require('./routes/team-routes')
+const playerRoutes = require('./routes/player-routes')
 const degreeRoutes = require('./routes/Degree-routes')
 const matchRoutes = require('./routes/match-routes')
 const matchTeamsRoutes = require('./routes/matchTeams-routes')
@@ -40,7 +41,7 @@ app.use('/api/matchTeams',matchTeamsRoutes)
 app.use('/api/assignment',assignmentRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/admin', adminRoutes)
-
+app.use('/api/player', playerRoutes)
 
 db.sequelize.sync({ alter: true }).then(async () => {
 
