@@ -56,7 +56,7 @@ const getAllTeams = async (req, res) => {
         });
     }
 };
-
+// Get one team by name, including its degree and players
 const getOneTeamByName = async (req, res) => {
     try {
         const team = await db.Team.findOne({ 
@@ -78,57 +78,6 @@ const getOneTeamByName = async (req, res) => {
     } catch (err) {
         return res.status(400).send({
             message: 'Error retrieving team',
-            error: err.message
-        });
-    }
-};
-
-const getPlayersForOneTeamByName = async (req, res) => {
-    try {
-        const team = await db.Team.findOne({ where: { TeamName: req.params.TeamName } });
-        if (!team) {
-            return res.status(404).send({
-                message: 'Team not found'
-            });
-        }
-        // convert instance to plain object
-        const teamObj = team.get({ plain: true });
-        let players = teamObj.Players;
-
-        if (players == null) {
-            players = [];
-        } else if (typeof players === 'string') {
-            try {
-                players = JSON.parse(players);
-            } catch (e) {
-                players = [];
-            }
-        }
-
-        if (!Array.isArray(players)) {
-            players = [players];
-        }
-
-        players = players.map(p => {
-            if (p == null || typeof p !== 'object') return p;
-            const normalized = { ...p };
-            ['num', 'sub', 'YCard', 'RCard', 'goal', 'onGoal'].forEach(k => {
-                if (normalized[k] !== undefined && normalized[k] !== null) {
-                    const n = Number(normalized[k]);
-                    normalized[k] = Number.isNaN(n) ? normalized[k] : n;
-                }
-            });
-            return normalized;
-        });
-        teamObj.Players = players;
-
-        return res.status(200).send({
-            message: 'Players retrieved successfully',
-            data: players
-        });
-    } catch (err) {
-        return res.status(400).send({
-            message: 'Error retrieving players for team',
             error: err.message
         });
     }
@@ -177,53 +126,6 @@ const deleteTeam = async (req, res) => {
     }
 };
 
-const deletePlayers = async(req,res)=>{
-    try{
-        const team = await db.Team.findOne({ where: { TeamName: req.params.TeamName } });
-        if (!team) {
-            return res.status(404).send({
-                message: 'Team not found'
-            });
-        }
-        const teamObj = team.get({ plain: true });
-        let players = teamObj.Players;
-        if (typeof players === 'string') {
-            try { players = JSON.parse(players); } catch (e) { players = []; }
-        }
-        if (!Array.isArray(players)) players = [players];
-        const playerNumberToDelete = req.body.playerNumberToDelete;
-        if (!Array.isArray(playerNumberToDelete)) {
-            return res.status(400).send({
-                message: 'Invalid player numbers to delete'
-            });
-        }
-        const updatedPlayers = players.filter(player => {
-            if (typeof player === 'object' && player !== null) {
-                if (player.id !== undefined && playerNumberToDelete.includes(player.id)) {
-                    return false;
-                }
-                if (player.num !== undefined && playerNumberToDelete.includes(player.num)) {
-                    return false;
-                }
-                if (player.name !== undefined && playerNumberToDelete.includes(player.name)) {
-                    return false;
-                }
-            }
-            return true;
-        });
-        await team.update({ Players: updatedPlayers });
-        return res.status(200).send({
-            message: 'Players deleted successfully',
-            data: updatedPlayers
-        });
-    } catch (err) {
-        return res.status(400).send({
-            message: 'Error deleting players',
-            error: err.message
-        });
-    }
-};
-
 const updateTeam = async (req, res) => {
     try {
         const updates = { ...req.body };
@@ -234,70 +136,6 @@ const updateTeam = async (req, res) => {
                 message: 'Team not found'
             });
         }
-
-//        // Handle Players field specially: allow patching or replacing entries
-//        if (updates.Players !== undefined) {
-//            let incoming = updates.Players;
-//            if (typeof incoming === 'string') {
-//                try { incoming = JSON.parse(incoming); } catch (e) {
-//                    return res.status(400).send({ message: 'Invalid Players JSON', error: e.message });
-//                }
-//            }
-//
-//            if (!Array.isArray(incoming)) incoming = [incoming];
-//
-//            // Get existing players
-//            const teamObj = team.get({ plain: true });
-//            let existing = teamObj.Players;
-//            if (typeof existing === 'string') {
-//                try { existing = JSON.parse(existing); } catch (e) { existing = []; }
-//            }
-//            if (existing == null) existing = [];
-//            if (!Array.isArray(existing)) existing = [existing];
-//
-//            // If client requests full replace (send replacePlayers: true) we replace, otherwise we patch/merge
-//            const replaceFlag = updates.replacePlayers === true || updates.PlayersReplace === true;
-//            let finalPlayers;
-//
-//            const normalizePlayer = (p) => {
-//                if (p == null || typeof p !== 'object') return p;
-//                const normalized = { ...p };
-//                ['num', 'sub', 'YCard', 'RCard', 'goal', 'onGoal'].forEach(k => {
-//                    if (normalized[k] !== undefined && normalized[k] !== null) {
-//                        const n = Number(normalized[k]);
-//                        normalized[k] = Number.isNaN(n) ? normalized[k] : n;
-//                    }
-//                });
-//                return normalized;
-//            };
-//
-//            if (replaceFlag) {
-//                finalPlayers = incoming.map(normalizePlayer);
-//            } else {
-//                // Patch/merge each incoming object into existing players by id, then num, then name
-//                incoming.forEach(patch => {
-//                    if (patch == null || typeof patch !== 'object') return;
-//                    let idx = -1;
-//                    if (patch.id !== undefined) idx = existing.findIndex(e => e && e.id == patch.id);
-//                    if (idx === -1 && patch.num !== undefined) idx = existing.findIndex(e => e && e.num == patch.num);
-//                    if (idx === -1 && patch.name !== undefined) idx = existing.findIndex(e => e && e.name == patch.name);
-//
-//                    if (idx !== -1) {
-//                        existing[idx] = { ...existing[idx], ...patch };
-//                    } else {
-//                        existing.push(patch);
-//                    }
-//                });
-//                finalPlayers = existing.map(normalizePlayer);
-//            }
-//
-//            updates.Players = finalPlayers;
-//            // cleanup any replace flag provided by client
-//            delete updates.replacePlayers;
-//
-//            delete updates.PlayersReplace;
-//        }
-
         const updatedTeam = await team.update(updates);
         return res.status(200).send({
             message: 'Team updated successfully',
@@ -315,9 +153,7 @@ module.exports = {
     createTeam,
     getAllTeams,
     getOneTeamByName,
-    getPlayersForOneTeamByName,
     getManagersForOneTeamByName,
     deleteTeam,
-    deletePlayers,
     updateTeam
 }

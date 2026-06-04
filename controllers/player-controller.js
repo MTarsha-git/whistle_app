@@ -42,6 +42,18 @@ const updatePlayer = async (req,res)=>{
     }
 };
 
+const getAllPlayers = async (req,res)=>{
+    try {
+        const players = await db.Player.findAll()
+        if(players.length === 0){
+            return res.status(404).json({error:"No players found"})
+        }
+        res.status(200).json(players)}
+    catch (error) {
+        res.status(500).json({error:error.message})
+    }
+};
+
 const getAllPlayersOfTeam = async (req,res)=>{
     try {
         const team = await db.Team.findByPk(req.params.TeamId)
@@ -72,5 +84,6 @@ module.exports = {
     createPlayer,
     updatePlayer,
     getAllPlayersOfTeam,
+    getAllPlayers,
     deletePlayer
 }

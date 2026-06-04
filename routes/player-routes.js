@@ -14,6 +14,8 @@ router.patch('/editPlayer/:id', isAdmin,upload.single('photo'), player.updatePla
 
 router.get('/getAllPlayersOfTeam/:TeamId', player.getAllPlayersOfTeam);
 
+router.get('/getAllPlayers', player.getAllPlayers);
+
 router.delete('/deletePlayer/:id', isAdmin, player.deletePlayer);
 
 module.exports = router
@@ -21,5 +23,6 @@ module.exports = router
 //my api for player:
 //http://localhost:3000/api/player/createPlayer
 //http://localhost:3000/api/player/editPlayer/:id
+//http://localhost:3000/api/player/getAllPlayers
 //http://localhost:3000/api/player/getAllPlayersOfTeam/:TeamId
 //http://localhost:3000/api/player/deletePlayer/:id

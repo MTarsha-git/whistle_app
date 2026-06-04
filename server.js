@@ -43,7 +43,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/player', playerRoutes)
 
-db.sequelize.sync({ alter: true }).then(async () => {
+db.sequelize.sync({ force: true }).then(async () => {
 
     app.listen(3000, () => console.log('server listening in port 3000'))
 })
