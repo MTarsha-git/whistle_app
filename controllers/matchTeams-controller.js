@@ -2,9 +2,9 @@ const db = require('../models');
 
 const addTeamTOMatch = async (req, res) => {
     try {
-        const { MatchId, TeamId } = req.body;
-        if (!MatchId || !TeamId) {
-            return res.status(400).send({ message: 'MatchId and TeamId are required' });
+        const { MatchId, TeamId , ParticipatingPlayers, substitutePlayers } = req.body;
+        if (!MatchId || !TeamId || !ParticipatingPlayers || !substitutePlayers) {
+            return res.status(400).send({ message: 'MatchId, TeamId, ParticipatingPlayers, and substitutePlayers are required' });
         }
         // Check if Match exists
         const matchCreated = await db.Match.findByPk(MatchId);
@@ -37,7 +37,21 @@ const addTeamTOMatch = async (req, res) => {
         if (teamMatchOnSameDate) {
             return res.status(400).send({ message: 'Team already has a match on the same date' });
         }
-        await db.MatchTeams.create({ MatchId, TeamId });
+        if (ParticipatingPlayers.length !== 11) {
+            if (ParticipatingPlayers.length < 11) {
+                return res.status(400).send({ message: 'A team must have at least 11 participating players' });
+            } else {
+                return res.status(400).send({ message: 'A team cannot have more than 11 participating players' });
+            }
+
+        }
+        if (substitutePlayers.length < 5) {
+            return res.status(400).send({ message: 'A team must have at least 5 substitute players' });
+        }
+        if (substitutePlayers.length > 15) {
+            return res.status(400).send({ message: 'A team cannot have more than 15 substitute players' });
+        }
+        await db.MatchTeams.create({ MatchId, TeamId, ParticipatingPlayers, substitutePlayers });
         return res.status(201).send({ message: 'Team added to Match successfully' });
 
     } catch (err) {
