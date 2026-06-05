@@ -42,6 +42,11 @@ module.exports = (sequelize,Datatype)=>{
         Team.hasMany(models.Player, {
             foreignKey: {name: 'TeamId' , allowNull: false},
         });
+        Team.hasMany(models.LineUp, {
+            foreignKey: { name: 'TeamId', allowNull: false },
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+        });
         Team.belongsTo(models.Degree, {
             foreignKey: { name: 'DegreeId', allowNull: false },
             onDelete: 'CASCADE',

@@ -20,6 +20,12 @@ module.exports = (sequelize,Datatype)=>{
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE'
         });
+        Match.hasMany(models.LineUp, {
+            foreignKey: {name:'MatchId',allowNull:false},
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+        });
+        
         Match.belongsTo(models.Degree, {
             foreignKey: { name: 'DegreeId', allowNull: false },
             onDelete: 'CASCADE',
