@@ -6,6 +6,11 @@ const addTeamTOMatch = async (req, res) => {
         if (!MatchId || !TeamId ) {
             return res.status(400).send({ message: 'MatchId and TeamId are required' });
         }
+        // Check if Team exists
+        const teamCreated = await db.Team.findByPk(TeamId);
+        if (!teamCreated) {
+            return res.status(404).send({ message: 'Team not found' });
+        }
         // Check if Match exists
         const matchCreated = await db.Match.findByPk(MatchId);
         if (!matchCreated) {
