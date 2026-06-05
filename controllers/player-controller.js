@@ -11,6 +11,10 @@ const createPlayer = async (req,res)=>{
         if(!team){
             return res.status(404).json({error:"Team not found"})
         }
+        const existingPlayer = await db.Player.findOne({ where: { Number, TeamId } });
+        if (existingPlayer) {
+            return res.status(400).json({ error: "A player with the same number already exists in this team" });
+        }
         const player = await db.Player.create({
             PlayerName,
             Number,
@@ -31,9 +35,13 @@ const updatePlayer = async (req,res)=>{
         if(!player){
             return res.status(404).json({error:"Player not found"})
         }
-        const team = await db.Team.findByPk(TeamId)
+        const team = await db.Team.findByPk(player.TeamId)
         if(!team){
             return res.status(404).json({error:"Team not found"})
+        }
+        const existingPlayer = await db.Player.findOne({ where: { Number, TeamId: player.TeamId } });
+        if (existingPlayer && existingPlayer.id !== player.id) {
+            return res.status(400).json({ error: "A player with the same number already exists in this team" });
         }
         await player.update({PlayerName,Number,Position,TeamId})
         res.status(200).json(player)

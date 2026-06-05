@@ -15,16 +15,6 @@ module.exports = (sequelize, DataTypes) => {
         model: 'Team',
         key: 'id'
       }
-    },
-    ParticipatingPlayers: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER),
-      allowNull: false,
-      defaultValue: [],
-    },
-    substitutePlayers: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER),
-      allowNull: false,      
-      defaultValue: [],
     }
   }, {
     timestamps: false,

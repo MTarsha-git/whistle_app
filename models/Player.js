@@ -6,8 +6,7 @@ module.exports = (sequelize,Datatype)=>{
         },
         Number:{
             type:Datatype.INTEGER,
-            allowNull:false,
-            unique:true
+            allowNull:false
         },
         YCard:{
             type:Datatype.INTEGER,
