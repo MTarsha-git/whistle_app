@@ -25,12 +25,12 @@ module.exports = (sequelize,Datatype)=>{
         
     })
     LineUp.associate = models => {
-            LineUp.belongsTo(models.Team, {
+        LineUp.belongsTo(models.Team, {
             foreignKey: { name: 'TeamId', allowNull: false },
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE'
         });
-        LineUp.hasMany(models.Match, {
+        LineUp.belongsTo(models.Match, {
             foreignKey: { name: 'MatchId', allowNull: false },
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE'
