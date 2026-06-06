@@ -17,6 +17,7 @@ const matchTeamsRoutes = require('./routes/matchTeams-routes')
 const assignmentRoutes = require('./routes/assignment-routes')
 const adminRoutes = require('./routes/admin-routes')
 const authRoutes = require('./routes/auth-routes')
+const eventRoutes = require('./routes/event-routes')
 const typeOfEventRoutes = require('./routes/typeOfEvent-routes')
 const lineUpRoutes = require('./routes/lineUp-routes')
 const { FORCE } = require('sequelize/lib/index-hints')
@@ -46,6 +47,7 @@ app.use('/api/admin', adminRoutes)
 app.use('/api/typeOfEvent', typeOfEventRoutes)
 app.use('/api/player', playerRoutes)
 app.use('/api/lineUp', lineUpRoutes)
+app.use('/api/event', eventRoutes)
 
 db.sequelize.sync({ force: true }).then(async () => {
 
