@@ -45,7 +45,11 @@ module.exports = (sequelize,Datatype)=>{
             onDelete: "CASCADE",
             onUpdate: "CASCADE"
         });
-
+        User.hasMany(models.RefereeEvaluation, {
+            foreignKey: { name: 'UserId', allowNull: false },
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+        });
         User.belongsTo(models.Role, {
             foreignKey: { name: 'RoleId', allowNull: false },
             onDelete: 'CASCADE',
