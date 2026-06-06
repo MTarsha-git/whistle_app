@@ -16,6 +16,8 @@ router.get('/getAllMatches', isAdmin, matchController.getMatches);
 
 router.get('/getOneMatch/:id', isReferee, matchController.getOneMatch);
 
+router.get('/getMatchDetails/:MatchId', isReferee, matchController.getMatchDetails);
+
 router.delete('/deleteMatch/:id', isAdmin, matchController.deleteMatch);
 
 module.exports = router;
@@ -24,5 +26,6 @@ my api for match:
 http://localhost:3000/api/match/createMatch
 http://localhost:3000/api/match/getAllMatches
 http://localhost:3000/api/match/getOneMatch/:id
+http://localhost:3000/api/match/getMatchDetails/:MatchId
 http://localhost:3000/api/match/deleteMatch/:id
 */
