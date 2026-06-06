@@ -3,6 +3,10 @@ module.exports = (sequelize, DataTypes) => {
         Time: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        Description: {
+            type: DataTypes.STRING,
+            allowNull: true
         }
     });
     Event.associate = models => {

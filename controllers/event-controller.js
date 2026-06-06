@@ -2,7 +2,7 @@ const db = require('../models');
 
 const createEvent = async (req, res) => {
     try{
-        const { Time, TypeOfEventId, MatchId, PlayerId, TeamId } = req.body;
+        const { Time, TypeOfEventId, MatchId, PlayerId, TeamId , Description } = req.body;
 
         // Validate required fields
         if (!Time || !TypeOfEventId || !MatchId || !PlayerId || !TeamId) {
@@ -65,7 +65,8 @@ const createEvent = async (req, res) => {
                     MatchId,
                     PlayerId: player.id,
                     Time: { [db.Sequelize.Op.lt]: Time },
-                    TypeOfEventId: 5
+                    TypeOfEventId: 5,
+                    Description
                 }
             });
             if (replaced) {
