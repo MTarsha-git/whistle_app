@@ -25,6 +25,11 @@ module.exports = (sequelize,Datatype)=>{
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE'
         });
+        Match.hasOne(models.MatchReport, {
+            foreignKey: { name: 'MatchId', allowNull: false },
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+        });
         Match.hasMany(models.Event, {
             foreignKey: { name: 'MatchId', allowNull: false },
             onDelete: 'CASCADE',

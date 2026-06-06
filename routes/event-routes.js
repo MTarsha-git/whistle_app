@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const eventController = require('../controllers/event-controller');
+const auth = require('../middleware/auth-maddleware');
+
+router.use(auth);
 
 router.post('/createEvent', eventController.createEvent);
 router.get('/getAllEventsForMatch/:MatchId', eventController.getAllEventsForMatch);
