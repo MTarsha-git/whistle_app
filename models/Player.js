@@ -43,6 +43,11 @@ module.exports = (sequelize,Datatype)=>{
             foreignKey: {name:'TeamId',allowNull:false}
             
         })
+        Player.hasMany(models.Event, {
+            foreignKey: { name: 'PlayerId', allowNull: false },
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+        });
     }
     return Player
 }

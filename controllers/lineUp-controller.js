@@ -16,6 +16,11 @@ const createLineUp = async (req, res) => {
         if (!match) {
             return res.status(404).json({ error: 'Match not found' });
         }
+        // Check if the team is added to the match
+        const teamIsAddedToMatch = await db.MatchTeams.findOne({ where: { TeamId, MatchId } });
+        if (!teamIsAddedToMatch) {
+            return res.status(400).json({ error: 'Team is not added to the match' });
+        }
         // Check if LineUp already exists for this Team and Match
         const existingLineUp = await db.LineUp.findOne({ where: { TeamId, MatchId } });
         if (existingLineUp) {

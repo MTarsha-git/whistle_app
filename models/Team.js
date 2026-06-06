@@ -47,6 +47,11 @@ module.exports = (sequelize,Datatype)=>{
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE'
         });
+        Team.hasMany(models.Event, {
+            foreignKey: { name: 'TeamId', allowNull: false },
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
+        });
         Team.belongsTo(models.Degree, {
             foreignKey: { name: 'DegreeId', allowNull: false },
             onDelete: 'CASCADE',

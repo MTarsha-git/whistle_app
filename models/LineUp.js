@@ -37,5 +37,5 @@ module.exports = (sequelize,Datatype)=>{
         });
 
     }
-    return LineUp    
+    return LineUp
 }
